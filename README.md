@@ -11,7 +11,7 @@ Sam provides a tool written in JavaScript to implement most of the same things t
 
 ### Features
 
-- --dry-run mode so you can see what it would do without actually making changes
+- `--dry-run` mode so you can see what it would do without actually making changes
 - Standard macOS preferences support to configure two preferences:
   - `allowMajor` -- to allow setting up Major OS updates for auto-install
   - `updateDelayDays` -- a number of days to wait after an update is first presented before setting it up for auto-install
