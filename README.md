@@ -20,7 +20,7 @@ Sam provides a tool written in JavaScript to implement most of the same things t
 
 ### Product Identifier
 
-This code defines a product identifier of "com.github.gregneagle.autoupdatehelper". If you are going to build this tool for your own use, you may want to change that to reflect your organization.
+This code defines a product identifier of "com.github.gregneagle.autoupdatehelper" in the productinfo.swift file. If you are going to build this tool for your own use, you may want to change that to reflect your organization.
 
 ### Preferences
 
