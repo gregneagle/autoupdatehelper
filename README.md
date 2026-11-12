@@ -7,7 +7,7 @@ https://www.afp548.com/2026/11/09/bypass-the-ramp-update-tonight-faster-macos-up
 
 ### Why is this?
 
-Sam provides a tool written in JavaScript to implement most of the same things this tool implements. I found the combo of JavaScript and the Objective-C bridge very difficult to follow, and I wanted to make some changes. I decided that at least for me, it would be easier to just build an equivilent tool in Swift -- one I could more easily tweak to my desires.
+Sam provides a tool written in JavaScript to implement most of the same things this tool implements. I found the combo of JavaScript and the Objective-C bridge very difficult to follow, and I wanted to make some changes. I decided that at least for me, it would be easier to just build an equivalent tool in Swift -- one I could more easily tweak to my desires.
 
 ### Features
 
