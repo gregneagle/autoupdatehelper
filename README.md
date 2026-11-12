@@ -13,8 +13,8 @@ Sam provides a tool written in JavaScript to implement most of the same things t
 
 - --dry-run mode so you can see what it would do without actually making changes
 - Standard macOS preferences support to configure two preferences:
-  - allowMajor -- to allow setting up Major OS updates for auto-install
-  - updateDelayDays -- a number of days to wait after an update is first presented before setting it up for auto-install
+  - `allowMajor` -- to allow setting up Major OS updates for auto-install
+  - `updateDelayDays` -- a number of days to wait after an update is first presented before setting it up for auto-install
 - Adds pending Safari and Command Line Tools updates to the auto-update list
 - Logging to Apple Unified Logging
 
@@ -24,7 +24,7 @@ This code defines a product identifier of "com.github.gregneagle.autoupdatehelpe
 
 ### Preferences
 
-You can define these preferences in /Library/Preferences/<product_identifier>.plist or via configuration profile:
+You can define these preferences in `/Library/Preferences/<product_identifier>.plist` or via configuration profile:
 
 `allowMajor`: Boolean -- If true, on macOS 26 and later will set up _major_ OS updates (upgrades) (if available) for auto-install.
 
@@ -34,11 +34,11 @@ You can define these preferences in /Library/Preferences/<product_identifier>.pl
 
 Logging is written to Apple Unified Logging and can be read like so:
 ```
-sudo log show --last 1h --style compact --predicate 'subsystem=="<product_identifier>"'
+sudo log show --style compact --predicate 'subsystem=="<product_identifier>"'
 ```
 If you make no changes to the product identifier, that would be:
 ```
-sudo log show --last 1h --style compact --predicate 'subsystem=="com.github.gregneagle.autoupdatehelper"'
+sudo log show --style compact --predicate 'subsystem=="com.github.gregneagle.autoupdatehelper"'
 ```
 
 ### Building 
