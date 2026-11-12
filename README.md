@@ -18,6 +18,14 @@ Sam provides a tool written in JavaScript to implement most of the same things t
 - Adds pending Safari and Command Line Tools updates to the auto-update list
 - Logging to Apple Unified Logging
 
+### Main differences from Sam's JavaScript tool
+
+- Adds Safari updates to the auto-update list
+- Supports local and managed preferences
+- Supports delaying configuring an update for auto-install for an admin-defined number of days after the update is first available
+- Logs to Apple Unified Logging
+- Relies _only_ on com.apple.SoftwareUpdate's `RecommendedUpdates` -- does not consult `/System/Library/AssetsV2/com_apple_MobileAsset_MacSoftwareUpdate/com_apple_MobileAsset_MacSoftwareUpdate.xml`
+
 ### Product Identifier
 
 This code defines a product identifier of "com.github.gregneagle.autoupdatehelper" in the productinfo.swift file. If you are going to build this tool for your own use, you may want to change that to reflect your organization.
