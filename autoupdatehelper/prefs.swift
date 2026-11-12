@@ -51,10 +51,9 @@ struct SUSharedPrefs {
 
 /// Struct for working with this tool's preferences
 struct Preferences {
-
-    // gets a preference, honoring the various preference "levels"
-    // including MCX/config profiles
-    static func get(_ prefName: String) -> Any? {
+    // gets a preference from our preferences domain,
+    // honoring the various preference "levels" including MCX/config profiles
+    private static func get(_ prefName: String) -> Any? {
         return CFPreferencesCopyAppValue(
             prefName as CFString,
             Info.identifier as CFString
@@ -62,7 +61,11 @@ struct Preferences {
     }
 
     // specific supported preferences
-    static var allowMajor = get("allowMajor") as? Bool ?? false
-    static var updateDelayDays = get("updateDelayDays") as? Int ?? 0
+    static var allowMajor: Bool {
+        return get("allowMajor") as? Bool ?? false
+    }
+    static var updateDelayDays: Int {
+        return get("updateDelayDays") as? Int ?? 0
+    }
 }
 
