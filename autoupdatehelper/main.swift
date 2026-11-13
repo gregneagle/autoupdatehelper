@@ -29,7 +29,7 @@ func fullOSVersion() -> String {
 /// There's a delay between when we use CFPreferencesSetValue to write a value and when
 /// it actually shows up in the prefs file. Attempt to verify it did indeed show up in the file
 func verifyUpdatedAutoInstallProductKeysWereWritten(_ expectedKeys: [String]) -> Bool {
-    if NSUserName() != "root" {
+    if geteuid() != 0 {
         log("Not running as root: could not update AutoInstallProductKeys")
         return false
     }
@@ -48,22 +48,25 @@ func verifyUpdatedAutoInstallProductKeysWereWritten(_ expectedKeys: [String]) ->
 }
 
 /// Updates com.apple.SoftwareUpdate's AutoInstallProductKeys
-func updateAutoInstallProductKeys(productKeys: [String], dryRun: Bool = false) {
+func updateAutoInstallProductKeys(productKeys: [String], dryRun: Bool = false) -> Bool {
     let currentAutoInstallProductKeys = SUSharedPrefs.get("AutoInstallProductKeys") as? [String] ?? []
     if Set(productKeys) == Set(currentAutoInstallProductKeys) {
         printAndLog("No change to AutoInstallProductKeys: \(productKeys)")
-        return
+        // return false to indicate no change was made
+        return false
     }
     if dryRun {
         print("Would set AutoInstallProductKeys to: \(productKeys)")
-        return
+        // return false to indicate no change was made
+        return false
     }
     // set the keys
     SUSharedPrefs.set("AutoInstallProductKeys", productKeys)
     printAndLog("Set AutoInstallProductKeys to: \(productKeys)")
+    return true
 }
 
-func showHelpAndExit() {
+func showHelp() {
     print("""
 USAGE: autoupdatehelper [options]
 A tool to configure macOS updates for automatic install overnight.
@@ -74,47 +77,50 @@ OPTIONS:
   -v, --version Show version info
   -h, --help    Show this help
 """)
-    exit(0)
 }
 
-func printProductVersionAndExit() {
+func printProductVersion() {
     print(Info.version)
-    exit(0)
 }
 
-func run() {
+func run() -> Int32 {
     // command-line option variables
     var dryRun = false
+
+    var exitcode: Int32 = 0
 
     // some simple option/flag parsing (SwiftArgumentParser is pretty heavy)
     let args = CommandLine.arguments
     let userArgs = Array(args.dropFirst())
     if userArgs.contains("-h") || userArgs.contains("--help") {
-        showHelpAndExit()
+        showHelp()
+        return 0
     }
     if userArgs.contains("-v") || userArgs.contains("--version") {
-        printProductVersionAndExit()
+        printProductVersion()
+        return 0
     }
     for arg in userArgs {
         if arg == "--dry-run" {
             dryRun = true
         } else {
             // unknown arg
-            showHelpAndExit()
+            showHelp()
+            return EX_USAGE
         }
     }
 
-    log("### Starting run ###")
     if majorOSVersion() < 15 {
-        printAndLog("macOS \(fullOSVersion()) does not support AutoInstallProductKeys, nothing to do")
-        return
+        printAndLog("WARNING: macOS \(fullOSVersion()) does not support AutoInstallProductKeys, nothing to do")
+        return 0
     }
 
-    if NSUserName() != "root", dryRun == false {
+    if geteuid() != 0, dryRun == false {
         printAndLog("WARNING: not running as root user; no changes will be made. Setting --dry-run mode.")
         dryRun = true
     }
 
+    log("### Starting run ###")
     // read some preferences
     var allowMajor = Preferences.allowMajor
     let updateDelayDays = Preferences.updateDelayDays
@@ -129,9 +135,7 @@ func run() {
         allowMajor: allowMajor, updateDelayDays: updateDelayDays)
     let wanted = updateProcessor.productKeysToSchedule()
     // add those keys to softwareupdate's preferences
-    updateAutoInstallProductKeys(productKeys: wanted, dryRun: dryRun)
-
-    if !dryRun {
+    if updateAutoInstallProductKeys(productKeys: wanted, dryRun: dryRun) {
         // check to see if they actually got written before we kick off a background check
         if verifyUpdatedAutoInstallProductKeysWereWritten(wanted) {
             // attempt to kick off a SoftwareUpdate background check
@@ -139,11 +143,11 @@ func run() {
             notify_post("com.apple.SoftwareUpdate.TriggerBackgroundCheck")
         } else {
             printAndLog("Failed to update AutoInstallProductKeys!")
+            exitcode = 1
         }
-    } else {
-        printAndLog("dryRun mode -- no changes made")
     }
     log("### Ending run ###")
+    return exitcode
 }
 
-run()
+exit(run())
