@@ -8,11 +8,26 @@
 import Foundation
 import OSLog
 
+/// A singleton object so we can keep a single reference to a Logger
+class InternalLogger {
+    static let shared = InternalLogger()
+
+    let logger: Logger
+
+    private init() {
+        let subsystem = Info.identifier
+        logger = Logger(subsystem: subsystem, category: "")
+    }
+
+    func log(_ message: String, logLevel: OSLogType = .default) {
+        logger.log(level: logLevel, "\(message, privacy: .public)")
+    }
+}
+
+
 /// General logging function
 func log(_ message: String, logLevel: OSLogType = .default) {
-    let subsystem = Info.identifier
-    let logger = Logger(subsystem: subsystem, category: "")
-    logger.log(level: logLevel, "\(message, privacy: .public)")
+    InternalLogger.shared.log(message, logLevel: logLevel)
 }
 
 func printAndLog(_ message: String) {
