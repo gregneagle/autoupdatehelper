@@ -13,7 +13,7 @@ struct SUSharedPrefs {
     static let prefsFilePath = "/Library/Preferences/com.apple.SoftwareUpdate.plist"
 
     static func sync() {
-        CFPreferencesAppSynchronize(IDENTIFIER)
+        CFPreferencesSynchronize(IDENTIFIER, kCFPreferencesAnyUser, kCFPreferencesCurrentHost)
     }
 
     /// Gets a preferences value from /Library/Preferences/com.apple.SoftwareUpdate.plist
@@ -30,9 +30,15 @@ struct SUSharedPrefs {
     /// (requires root)
     static func set(_ prefName: String, _ prefValue: Any?) {
         if let key = prefName as CFString? {
-            if let value = prefValue as CFPropertyList? {
+            if prefValue == nil {
                 CFPreferencesSetValue(
-                    key as CFString, value, IDENTIFIER,
+                    key, nil, IDENTIFIER,
+                    kCFPreferencesAnyUser, kCFPreferencesCurrentHost
+                )
+                sync()
+            } else if let value = prefValue as CFPropertyList? {
+                CFPreferencesSetValue(
+                    key, value, IDENTIFIER,
                     kCFPreferencesAnyUser, kCFPreferencesCurrentHost
                 )
                 sync()
