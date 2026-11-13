@@ -10,7 +10,8 @@ import OSLog
 import Testing
 
 /// We do not add this testing target to the target membership of logging,swift,
-/// we can replace log and printAndLog functions so we print nothing and log nothing
+/// allowing us to replace log() and printAndLog() functions so we print nothing and log nothing
+/// while running the tests
 func log(_ message: String, logLevel: OSLogType = .default) {
     // do nothing
 }
@@ -21,7 +22,6 @@ func printAndLog(_ message: String) {
 
 struct updateprocessingTests {
 
-    let goldengateMinorProductKey = "MSU_UPDATE_26B131_patch_27.2.1_minor"
     let goldengateMinor: [String: Any] = [
         "Display Name": "macOS 27.2.1",
         "Display Version": "27.2.1",
@@ -30,7 +30,6 @@ struct updateprocessingTests {
         "Product Key": "MSU_UPDATE_26B131_patch_27.2.1_minor"
     ]
 
-    let goldengateMajorProductKey = "MSU_UPDATE_26B131_patch_27.2.1_major"
     let goldengateMajor: [String: Any] = [
         "Display Name": "macOS 27.2.1",
         "Display Version": "27.2.1",
@@ -39,7 +38,6 @@ struct updateprocessingTests {
         "Product Key": "MSU_UPDATE_26B131_patch_27.2.1_major"
     ]
 
-    let tahoeMinorProductKey = "MSU_UPDATE_25G332_patch_26.7.2_minor"
     let tahoeMinor: [String: Any] = [
         "Display Name": "macOS Tahoe 26.7.2",
         "Display Version": "26.7.2",
@@ -48,7 +46,6 @@ struct updateprocessingTests {
         "Product Key": "MSU_UPDATE_25G332_patch_26.7.2_minor"
     ]
 
-    let tahoeMajorProductKey = "MSU_UPDATE_25G332_patch_26.7.2_major"
     let tahoeMajor: [String: Any] = [
         "Display Name": "macOS Tahoe 26.7.2",
         "Display Version": "26.7.2",
@@ -57,7 +54,6 @@ struct updateprocessingTests {
         "Product Key": "MSU_UPDATE_25G332_patch_26.7.2_major"
     ]
 
-    let sequoiaMinorProductKey = "MSU_UPDATE_24H232_patch_15.8.2_minor"
     let sequoiaMinor: [String: Any] = [
         "Display Name": "macOS Sequoia 15.8.2",
         "Display Version": "15.8.2",
@@ -66,7 +62,6 @@ struct updateprocessingTests {
         "Product Key": "MSU_UPDATE_24H232_patch_15.8.2_minor"
     ]
 
-    let safariTahoeAutoProductKey = "142-16640"
     let safariTahoeAuto: [String: Any] = [
         "Display Name": "Safari",
         "Display Version": "27.2",
@@ -74,7 +69,6 @@ struct updateprocessingTests {
         "Product Key": "142-16640"
     ]
 
-    let safariSequoiaAuto26ProductKey = "140-79446"
     let safariSequoiaAuto26: [String: Any] = [
         "Display Name": "Safari",
         "Display Version": "26.6.1",
@@ -82,13 +76,16 @@ struct updateprocessingTests {
         "Product Key": "140-79446"
     ]
 
-    let safariSequoiaAuto27ProductKey = "142-16627"
     let safariSequoiaAuto27: [String: Any] = [
         "Display Name": "Safari",
         "Display Version": "27.2",
         "Identifier": "Safari27.2SequoiaAuto",
         "Product Key": "142-16627"
     ]
+
+    func productKey(_ update: [String: Any]) -> String {
+        return update["Product Key"] as? String ?? ""
+    }
 
     func threeDaysAgo() -> Date {
         return Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()
@@ -101,9 +98,9 @@ struct updateprocessingTests {
         ]
         var processor = UpdateProcessor(allowMajor: false, updateDelayDays: 0)
         processor.recommended = recommended
-        processor.firstOfferDate = [goldengateMinorProductKey: Date()]
+        processor.firstOfferDate = [productKey(goldengateMinor): Date()]
         let wanted = processor.productKeysToSchedule()
-        #expect(wanted == [goldengateMinorProductKey])
+        #expect(wanted == [productKey(goldengateMinor)])
     }
 
     /// Test that returned key list is empty because it was first seen today
@@ -113,7 +110,7 @@ struct updateprocessingTests {
         ]
         var processor = UpdateProcessor(allowMajor: false, updateDelayDays: 3)
         processor.recommended = recommended
-        processor.firstOfferDate = [goldengateMinorProductKey: Date()]
+        processor.firstOfferDate = [productKey(goldengateMinor): Date()]
         let wanted = processor.productKeysToSchedule()
         #expect(wanted == [])
     }
@@ -125,9 +122,9 @@ struct updateprocessingTests {
         ]
         var processor = UpdateProcessor(allowMajor: false, updateDelayDays: 3)
         processor.recommended = recommended
-        processor.firstOfferDate = [goldengateMinorProductKey: threeDaysAgo()]
+        processor.firstOfferDate = [productKey(goldengateMinor): threeDaysAgo()]
         let wanted = processor.productKeysToSchedule()
-        #expect(wanted == [goldengateMinorProductKey])
+        #expect(wanted == [productKey(goldengateMinor)])
     }
 
     /// Test that returned key list is product key for tahoeMinor because allowMajor is false
@@ -139,11 +136,11 @@ struct updateprocessingTests {
         var processor = UpdateProcessor(allowMajor: false, updateDelayDays: 0)
         processor.recommended = recommended
         processor.firstOfferDate = [
-            goldengateMajorProductKey: Date(),
-            tahoeMinorProductKey: Date()
+            productKey(goldengateMajor): Date(),
+            productKey(tahoeMinor): Date()
         ]
         let wanted = processor.productKeysToSchedule()
-        #expect(wanted == [tahoeMinorProductKey])
+        #expect(wanted == [productKey(tahoeMinor)])
     }
 
     /// Test that returned key list is product key for goldengateMajor because allowMajor is true
@@ -155,11 +152,11 @@ struct updateprocessingTests {
         var processor = UpdateProcessor(allowMajor: true, updateDelayDays: 0)
         processor.recommended = recommended
         processor.firstOfferDate = [
-            goldengateMajorProductKey: Date(),
-            tahoeMinorProductKey: Date()
+            productKey(goldengateMajor): Date(),
+            productKey(tahoeMinor): Date()
         ]
         let wanted = processor.productKeysToSchedule()
-        #expect(wanted == [goldengateMajorProductKey])
+        #expect(wanted == [productKey(goldengateMajor)])
     }
 
     /// Test that returned key list contains Safari and macOS updates
@@ -171,10 +168,25 @@ struct updateprocessingTests {
         var processor = UpdateProcessor(allowMajor: false, updateDelayDays: 0)
         processor.recommended = recommended
         processor.firstOfferDate = [
-            tahoeMinorProductKey: Date()
+            productKey(tahoeMinor): Date()
         ]
         let wanted = processor.productKeysToSchedule()
-        #expect(wanted == [safariTahoeAutoProductKey, tahoeMinorProductKey])
+        #expect(wanted == [productKey(safariTahoeAuto), productKey(tahoeMinor)])
     }
 
+    /// Test that returned key list contains higher-versioned Safari update
+    @Test func productKeysToScheduleReturnsExpected7()  {
+        let recommended = [
+            sequoiaMinor,
+            safariSequoiaAuto26,
+            safariSequoiaAuto27
+        ]
+        var processor = UpdateProcessor(allowMajor: false, updateDelayDays: 0)
+        processor.recommended = recommended
+        processor.firstOfferDate = [
+            productKey(sequoiaMinor): Date()
+        ]
+        let wanted = processor.productKeysToSchedule()
+        #expect(wanted == [productKey(safariSequoiaAuto27), productKey(sequoiaMinor)])
+    }
 }
