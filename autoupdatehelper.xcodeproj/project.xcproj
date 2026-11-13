@@ -21,6 +21,7 @@
         {
           "target": "autoupdatehelperTests",
           "inclusions": [
+            "declarationutils.swift",
             "prefs.swift",
             "productinfo.swift",
             "updateprocessing.swift",

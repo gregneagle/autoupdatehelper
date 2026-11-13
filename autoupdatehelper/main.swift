@@ -130,6 +130,12 @@ func run() -> Int32 {
         allowMajor = false
     }
 
+    // clear a stale softwareupdate's ManagedProductMarketingVersion if needed,
+    // which can block the download of newer updates
+    if !dryRun {
+        clearStaleSUDeclarationInfoIfNeeded()
+    }
+
     // get product keys for items to attempt to auto-update
     let updateProcessor = UpdateProcessor(
         allowMajor: allowMajor, updateDelayDays: updateDelayDays)
