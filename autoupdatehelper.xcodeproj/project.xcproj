@@ -11,12 +11,31 @@
     ],
   },
   "files": [
-    { "kind": "folder", "path": "autoupdatehelper", "target-membership": [ "autoupdatehelper" ] },
+    {
+      "kind": "folder",
+      "path": "autoupdatehelper",
+      "target-membership": [
+        "autoupdatehelper",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "autoupdatehelperTests",
+          "inclusions": [
+            "prefs.swift",
+            "productinfo.swift",
+            "updateprocessing.swift",
+            "versionutils.swift",
+          ],
+        },
+      ],
+    },
+    { "kind": "folder", "path": "autoupdatehelperTests", "target-membership": [ "autoupdatehelperTests" ] },
     {
       "kind": "group",
       "name": "Products",
       "children": [
         { "path": "<PRODUCTS>/autoupdatehelper", "id": "C0FDDC4D30A3A17300C57CEF", "type": "compiled.mach-o.executable", "index": false },
+        { "path": "<PRODUCTS>/autoupdatehelperTests.xctest", "id": "C0C673D830A6A1CC00470A2C", "type": "wrapper.cfbundle", "index": false },
       ],
     },
   ],
@@ -44,6 +63,31 @@
         "MACOSX_DEPLOYMENT_TARGET": "15.0",
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+        "SWIFT_VERSION": "5.0",
+      },
+    }, {
+      "name": "autoupdatehelperTests",
+      "id": "C0C673D730A6A1CC00470A2C",
+      "product": "Products/autoupdatehelperTests.xctest",
+      "product-type": "bundle.unit-test",
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "build-settings": {
+        "CODE_SIGN_IDENTITY[sdk=macosx*]": "-",
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "1",
+        "DEVELOPMENT_TEAM": "52ZFZKM6BK",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "MARKETING_VERSION": "1.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.github.gregneagle.autoupdateHelperTests",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_EMIT_LOC_STRINGS": "NO",
         "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
         "SWIFT_VERSION": "5.0",
       },
