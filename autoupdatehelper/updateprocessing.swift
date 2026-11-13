@@ -10,22 +10,16 @@ import Foundation
 /// A struct to handle figuring out which updates to add to AutoInstallProductKeys
 /// with some flexibilty to allow writing tests
 struct UpdateProcessor {
-    var recommended: [[String:Any]]
-    var firstOfferDate: [String: Date]
+    var recommended: [[String:Any]]    // definied as var so tests can replace with known values
+    var firstOfferDate: [String: Date] // definied as var so tests can replace with known values
     let allowMajor: Bool
     let updateDelayDays: Int
 
-    init(allowMajor: Bool, updateDelayDays: Int, testing: Bool = false) {
+    init(allowMajor: Bool, updateDelayDays: Int) {
         self.allowMajor = allowMajor
         self.updateDelayDays = updateDelayDays
-        if testing {
-            // this lets us set known values for testing
-            recommended = []
-            firstOfferDate = [:]
-        } else {
-            recommended = SUSharedPrefs.get("RecommendedUpdates") as? [[String:Any]] ?? []
-            firstOfferDate = SUSharedPrefs.get("FirstOfferDateDictionary") as? [String: Date] ?? [:]
-        }
+        recommended = SUSharedPrefs.get("RecommendedUpdates") as? [[String:Any]] ?? []
+        firstOfferDate = SUSharedPrefs.get("FirstOfferDateDictionary") as? [String: Date] ?? [:]
     }
 
     private func daysAvailable(_ productKey: String) -> Int {
@@ -33,7 +27,8 @@ struct UpdateProcessor {
             let timeInterval = Date().timeIntervalSince(firstOfferDate)
             return Int(timeInterval/(24*60*60))
         } else {
-            return -1
+            // not in the FirstOfferDateDictionary, we'll assume the update just became available
+            return 0
         }
     }
 
@@ -45,10 +40,10 @@ struct UpdateProcessor {
         var safariUpdate = [String:String]()
 
         for update in recommended {
-            guard let displayName = update["Display Name"] as? String,
-                  let productKey = update["Product Key"] as? String,
-                  let version = update["Display Version"] as? String
-                    else { continue }
+            guard let productKey = update["Product Key"] as? String else { continue }
+            let displayName = update["Display Name"] as? String ?? ""
+            let version = update["Display Version"] as? String ?? ""
+
             // macOS updates
             if productKey.hasPrefix("MSU_UPDATE_") {
                 let daysAvailable = daysAvailable(productKey)
