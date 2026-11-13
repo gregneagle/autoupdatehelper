@@ -65,7 +65,8 @@ struct Preferences {
         return get("allowMajor") as? Bool ?? false
     }
     static var updateDelayDays: Int {
-        return get("updateDelayDays") as? Int ?? 0
+        let value = get("updateDelayDays") as? Int ?? 0
+        return max(value, 0)
     }
 }
 
