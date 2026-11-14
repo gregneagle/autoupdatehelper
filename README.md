@@ -17,6 +17,7 @@ Sam provides a tool written in JavaScript to implement most of the same things t
   - `updateDelayDays` -- a number of days to wait after an update is first presented before setting it up for auto-install
 - Adds pending Safari and Command Line Tools updates to the auto-update list
 - Logging to Apple Unified Logging
+- New as of version 1.1: will remove a stale softwareupdate ManagedProductMarketingVersion if needed. See https://www.afp548.com/2026/11/13/the-morning-after-autoinstallproductkeys-waking-up-to-the-same-macos-a-field-guide/
 
 ### Main differences from Sam's JavaScript tool
 
